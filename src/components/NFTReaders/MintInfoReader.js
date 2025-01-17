@@ -13,6 +13,7 @@ const MintInfoReader = ({ contractAddress }) => {
     setError('');
     try {
       const info = await getMintInfo(contractAddress, tokenId);
+      console.log('Mint Info received:', info);
       setMintInfo(info);
     } catch (error) {
       setError(error.message);
@@ -41,9 +42,26 @@ const MintInfoReader = ({ contractAddress }) => {
 
       {mintInfo && (
         <div className="info-grid">
-          <div>Value: {mintInfo.value}</div>
-          <div>Reference Day: {mintInfo.referenceDay}</div>
-          <div>Reference Month: {mintInfo.referenceMonth}</div>
+          <div className="info-item">
+            <strong>Token ID:</strong>
+            <span>{mintInfo.tokenId}</span>
+          </div>
+          <div className="info-item">
+            <strong>Reference Day:</strong>
+            <span>{mintInfo.referenceDay}</span>
+          </div>
+          <div className="info-item">
+            <strong>Reference Month:</strong>
+            <span>{mintInfo.referenceMonth}</span>
+          </div>
+          <div className="info-item">
+            <strong>Link Info:</strong>
+            <span>{mintInfo.linkInfoComplete}</span>
+          </div>
+          <div className="info-item">
+            <strong>Token URI:</strong>
+            <span>{mintInfo.tokenURI}</span>
+          </div>
         </div>
       )}
     </div>

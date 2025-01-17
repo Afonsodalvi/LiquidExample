@@ -18,19 +18,19 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
   const [transactionHash, setTransactionHash] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
-    value: '0x0000',
+    value: '',
     linkInfoComplete: 'https://example.com/info',
     tokenURI: 'https://example.com/metadata',
     referenceDay: 1,
     referenceMonth: 1,
   });
 
-  // Initialize arrays for each zone's data with appropriate types
+  // Initialize arrays for each zone's data with strings instead of hex
   const [zoneData, setZoneData] = useState({
-    ticketsAzul: Array(6).fill(0),      // Changed to number for uint256
-    pagTpusAzul: Array(6).fill('0x00'), // Kept as hex string for bytes
-    ticketsVerde: Array(6).fill(0),     // Changed to number for uint256
-    pagTpusVerde: Array(6).fill('0x00') // Kept as hex string for bytes
+    ticketsAzul: Array(6).fill(0),
+    pagTpusAzul: Array(6).fill(''),
+    ticketsVerde: Array(6).fill(0),
+    pagTpusVerde: Array(6).fill('')
   });
 
   useEffect(() => {
@@ -102,7 +102,7 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
       ...prev,
       [type]: prev[type].map((item, i) => {
         if (i !== index) return item;
-        // Convert to number for ticket values, keep as is for pagTpu values
+        // Convert to number for ticket values, keep as string for pagTpu values
         if (type === 'ticketsAzul' || type === 'ticketsVerde') {
           return parseInt(value) || 0;
         }
@@ -127,7 +127,7 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
           walletId,
           contractAddress,
           operations: [{
-            functionSignature: 'mintNFTSimple(bytes,string,string,uint256,uint256,uint256[],bytes[],uint256[],bytes[])',
+            functionSignature: 'mintNFTSimple(string,string,string,uint256,uint256,uint256[],string[],uint256[],string[])',
             argumentsValues: [
               formData.value,
               formData.linkInfoComplete,
@@ -174,11 +174,12 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
       )}
       <div className="form-group">
         <label>
-          Value (hex):
+          Value:
           <input
             type="text"
             value={formData.value}
             onChange={(e) => setFormData({...formData, value: e.target.value})}
+            placeholder="Enter value as string"
           />
         </label>
         <label>
@@ -234,7 +235,7 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
                   />
                   <input
                     type="text"
-                    placeholder={`${DEVICE_NAMES[index + 1]} PagTPU (hex)`}
+                    placeholder={`${DEVICE_NAMES[index + 1]} PagTPU`}
                     value={zoneData.pagTpusAzul[index]}
                     onChange={(e) => handleZoneDataChange('pagTpusAzul', index, e.target.value)}
                   />
@@ -249,7 +250,7 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
                   />
                   <input
                     type="text"
-                    placeholder={`${DEVICE_NAMES[index + 1]} PagTPU (hex)`}
+                    placeholder={`${DEVICE_NAMES[index + 1]} PagTPU`}
                     value={zoneData.pagTpusVerde[index]}
                     onChange={(e) => handleZoneDataChange('pagTpusVerde', index, e.target.value)}
                   />

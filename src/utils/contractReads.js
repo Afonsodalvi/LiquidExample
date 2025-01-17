@@ -16,11 +16,12 @@ provider.getNetwork().then(network => {
   console.error('Network connection error:', error);
 });
 
+// Updated ABI to match the actual contract functions
 const contractABI = [
-  "function getMintInfo(uint256 tokenId) external view returns (uint256, uint256, uint256)",
-  "function getTotalPagTpu(uint256 tokenId) external view returns (bytes[] memory azulValues, bytes[] memory verdeValues)",
+  "function getMintInfo(uint256 tokenId) external view returns (tuple(uint256 tokenId, uint256 referenceDay, uint256 referenceMonth, string linkInfoComplete, string tokenURI))",
+  "function getTotalPagTpu(uint256 tokenId) external view returns (string[] memory azulValues, string[] memory verdeValues)",
   "function getTickets(uint256 tokenId, uint256 deviceId) external view returns (uint256 ticketAzul, uint256 ticketVerde)",
-  "function getPagTpu(uint256 tokenId, uint256 deviceId) external view returns (bytes pagTpuAzul, bytes pagTpuVerde)"
+  "function getPagTpu(uint256 tokenId, uint256 deviceId) external view returns (string memory pagTpuAzul, string memory pagTpuVerde)"
 ];
 
 const handleContractError = (error) => {
@@ -47,9 +48,11 @@ export const getMintInfo = async (contractAddress, tokenId) => {
     const result = await contract.getMintInfo(tokenId);
     
     return {
-      value: result[0].toString(),
-      referenceDay: result[1].toString(),
-      referenceMonth: result[2].toString()
+      tokenId: result.tokenId.toString(),
+      referenceDay: result.referenceDay.toString(),
+      referenceMonth: result.referenceMonth.toString(),
+      linkInfoComplete: result.linkInfoComplete,
+      tokenURI: result.tokenURI
     };
   } catch (error) {
     console.error('getMintInfo error:', error);
@@ -78,8 +81,8 @@ export const getPagTpu = async (contractAddress, tokenId, deviceId) => {
     const result = await contract.getPagTpu(tokenId, deviceId);
     
     return {
-      pagTpuAzul: result.pagTpuAzul || '0x00',
-      pagTpuVerde: result.pagTpuVerde || '0x00'
+      pagTpuAzul: result.pagTpuAzul,
+      pagTpuVerde: result.pagTpuVerde
     };
   } catch (error) {
     console.error('getPagTpu error:', error);
@@ -93,8 +96,8 @@ export const getTotalPagTpu = async (contractAddress, tokenId) => {
     const result = await contract.getTotalPagTpu(tokenId);
     
     return {
-      azulValues: result.azulValues.map(v => v || '0x00'),
-      verdeValues: result.verdeValues.map(v => v || '0x00')
+      azulValues: result.azulValues,
+      verdeValues: result.verdeValues
     };
   } catch (error) {
     console.error('getTotalPagTpu error:', error);

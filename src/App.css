@@ -237,12 +237,80 @@ h1 {
 
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 15px;
-  padding: 15px;
+  padding: 20px;
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.info-item strong {
+  color: #0056b3;
+  font-size: 0.9em;
+}
+
+.info-item span {
+  color: #333;
+  word-break: break-all;
+}
+
+.data-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.search-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search-controls input {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  min-width: 120px;
+}
+
+.search-controls button {
+  padding: 8px 16px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-controls button:hover {
+  background-color: #004494;
+}
+
+.search-controls button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  border: 1px solid #ef9a9a;
 }
 
 .device-selector {
@@ -303,30 +371,27 @@ h1 {
   gap: 20px;
 }
 
-.data-section {
-  background: white;
-  padding: 20px;
+.zone-data {
+  background-color: #f8f9fa;
+  padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
 }
 
-.data-section h3 {
+.zone-data h4 {
+  color: #0056b3;
   margin-top: 0;
-  margin-bottom: 20px;
-  color: #333;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #dee2e6;
 }
 
-.search-controls {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  align-items: center;
+.info-grid .zone-data {
+  grid-column: span 2;
 }
 
-.search-controls input,
-.search-controls select {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 120px;
+@media (max-width: 768px) {
+  .info-grid .zone-data {
+    grid-column: span 1;
+  }
 }
