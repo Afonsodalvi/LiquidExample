@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
-import { getMintInfo } from '../../utils/contractReads';
+import { getTokenInfo } from '../../utils/contractReads';
 
-const MintInfoReader = ({ contractAddress }) => {
+const TokenInfoReader = ({ contractAddress }) => {
   const [tokenId, setTokenId] = useState('');
-  const [mintInfo, setMintInfo] = useState(null);
+  const [tokenInfo, setTokenInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const fetchMintInfo = async () => {
+  const fetchTokenInfo = async () => {
     if (!tokenId) return;
     setLoading(true);
     setError('');
     try {
-      const info = await getMintInfo(contractAddress, tokenId);
-      console.log('Mint Info received:', info);
-      setMintInfo(info);
+      const info = await getTokenInfo(contractAddress, tokenId);
+      console.log('Token Info received:', info);
+      setTokenInfo(info);
     } catch (error) {
       setError(error.message);
-      console.error('Error fetching mint info:', error);
+      console.error('Error fetching token info:', error);
     } finally {
       setLoading(false);
     }
@@ -25,7 +25,7 @@ const MintInfoReader = ({ contractAddress }) => {
 
   return (
     <div className="data-section">
-      <h3>Mint Information Reader</h3>
+      <h3>Token Information Reader</h3>
       <div className="search-controls">
         <input
           type="number"
@@ -33,34 +33,34 @@ const MintInfoReader = ({ contractAddress }) => {
           value={tokenId}
           onChange={(e) => setTokenId(e.target.value)}
         />
-        <button onClick={fetchMintInfo} disabled={loading || !tokenId}>
-          {loading ? 'Loading...' : 'Get Mint Info'}
+        <button onClick={fetchTokenInfo} disabled={loading || !tokenId}>
+          {loading ? 'Loading...' : 'Get Token Info'}
         </button>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
-      {mintInfo && (
+      {tokenInfo && (
         <div className="info-grid">
           <div className="info-item">
             <strong>Token ID:</strong>
-            <span>{mintInfo.tokenId}</span>
+            <span>{tokenInfo.tokenId}</span>
+          </div>
+          <div className="info-item">
+            <strong>Info:</strong>
+            <span>{tokenInfo.info}</span>
+          </div>
+          <div className="info-item">
+            <strong>Value:</strong>
+            <span>{tokenInfo.value}</span>
           </div>
           <div className="info-item">
             <strong>Reference Day:</strong>
-            <span>{mintInfo.referenceDay}</span>
+            <span>{tokenInfo.referenceDay}</span>
           </div>
           <div className="info-item">
             <strong>Reference Month:</strong>
-            <span>{mintInfo.referenceMonth}</span>
-          </div>
-          <div className="info-item">
-            <strong>Link Info:</strong>
-            <span>{mintInfo.linkInfoComplete}</span>
-          </div>
-          <div className="info-item">
-            <strong>Token URI:</strong>
-            <span>{mintInfo.tokenURI}</span>
+            <span>{tokenInfo.referenceMonth}</span>
           </div>
         </div>
       )}
@@ -68,4 +68,4 @@ const MintInfoReader = ({ contractAddress }) => {
   );
 };
 
-export default MintInfoReader; 
+export default TokenInfoReader; 

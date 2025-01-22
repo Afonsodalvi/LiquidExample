@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-const DEVICE_NAMES = {
-  1: 'Parquímetro',
-  2: 'Monitor',
-  3: 'PDV',
-  4: 'App',
-  5: 'WhatsApp',
-  6: 'Site'
-};
-
 const POLL_INTERVAL = 2000; // 2 seconds
 const MAX_RETRIES = 6; // Maximum number of retries
 const TIMEOUT_DURATION = 12000; // 12 seconds (2s * 6 retries)
@@ -18,19 +9,11 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
   const [transactionHash, setTransactionHash] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
+    info: '',
     value: '',
-    linkInfoComplete: 'https://example.com/info',
     tokenURI: 'https://example.com/metadata',
     referenceDay: 1,
     referenceMonth: 1,
-  });
-
-  // Initialize arrays for each zone's data with strings instead of hex
-  const [zoneData, setZoneData] = useState({
-    ticketsAzul: Array(6).fill(0),
-    pagTpusAzul: Array(6).fill(''),
-    ticketsVerde: Array(6).fill(0),
-    pagTpusVerde: Array(6).fill('')
   });
 
   useEffect(() => {
@@ -97,20 +80,6 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
     });
   };
 
-  const handleZoneDataChange = (type, index, value) => {
-    setZoneData(prev => ({
-      ...prev,
-      [type]: prev[type].map((item, i) => {
-        if (i !== index) return item;
-        // Convert to number for ticket values, keep as string for pagTpu values
-        if (type === 'ticketsAzul' || type === 'ticketsVerde') {
-          return parseInt(value) || 0;
-        }
-        return value;
-      })
-    }));
-  };
-
   const handleMintSimple = async () => {
     setLoading(true);
     setErrorMessage('');
@@ -127,17 +96,13 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
           walletId,
           contractAddress,
           operations: [{
-            functionSignature: 'mintNFTSimple(string,string,string,uint256,uint256,uint256[],string[],uint256[],string[])',
+            functionSignature: 'mintNFT(string,string,string,uint8,uint8)',
             argumentsValues: [
+              formData.info,
               formData.value,
-              formData.linkInfoComplete,
               formData.tokenURI,
               formData.referenceDay,
-              formData.referenceMonth,
-              zoneData.ticketsAzul,
-              zoneData.pagTpusAzul,
-              zoneData.ticketsVerde,
-              zoneData.pagTpusVerde
+              formData.referenceMonth
             ],
           }],
         }),
@@ -166,7 +131,7 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
 
   return (
     <div className="mint-nft-container">
-      <h2>Mint Revenue NFT</h2>
+      <h2>Mint NFT</h2>
       {errorMessage && (
         <div className="error-message">
           {errorMessage}
@@ -174,20 +139,21 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
       )}
       <div className="form-group">
         <label>
+          Info:
+          <input
+            type="text"
+            value={formData.info}
+            onChange={(e) => setFormData({...formData, info: e.target.value})}
+            placeholder="Enter NFT information"
+          />
+        </label>
+        <label>
           Value:
           <input
             type="text"
             value={formData.value}
             onChange={(e) => setFormData({...formData, value: e.target.value})}
-            placeholder="Enter value as string"
-          />
-        </label>
-        <label>
-          Link Info Complete:
-          <input
-            type="text"
-            value={formData.linkInfoComplete}
-            onChange={(e) => setFormData({...formData, linkInfoComplete: e.target.value})}
+            placeholder="Enter value"
           />
         </label>
         <label>
@@ -218,47 +184,6 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
             onChange={(e) => setFormData({...formData, referenceMonth: parseInt(e.target.value)})}
           />
         </label>
-
-        <div className="zone-data-container">
-          <h3>Zone Data</h3>
-          {Array(6).fill().map((_, index) => (
-            <div key={index} className="device-data">
-              <h4>{DEVICE_NAMES[index + 1]}</h4>
-              <div className="zone-inputs">
-                <div className="zona-azul">
-                  <h5>Zona Azul</h5>
-                  <input
-                    type="number"
-                    placeholder={`${DEVICE_NAMES[index + 1]} Ticket Value`}
-                    value={zoneData.ticketsAzul[index]}
-                    onChange={(e) => handleZoneDataChange('ticketsAzul', index, e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder={`${DEVICE_NAMES[index + 1]} PagTPU`}
-                    value={zoneData.pagTpusAzul[index]}
-                    onChange={(e) => handleZoneDataChange('pagTpusAzul', index, e.target.value)}
-                  />
-                </div>
-                <div className="zona-verde">
-                  <h5>Zona Verde</h5>
-                  <input
-                    type="number"
-                    placeholder={`${DEVICE_NAMES[index + 1]} Ticket Value`}
-                    value={zoneData.ticketsVerde[index]}
-                    onChange={(e) => handleZoneDataChange('ticketsVerde', index, e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder={`${DEVICE_NAMES[index + 1]} PagTPU`}
-                    value={zoneData.pagTpusVerde[index]}
-                    onChange={(e) => handleZoneDataChange('pagTpusVerde', index, e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
 
         <div className="button-group">
           <button 

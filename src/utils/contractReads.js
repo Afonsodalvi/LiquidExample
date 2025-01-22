@@ -16,12 +16,11 @@ provider.getNetwork().then(network => {
   console.error('Network connection error:', error);
 });
 
-// Updated ABI to match the actual contract functions
+// Updated ABI to match the new contract
 const contractABI = [
-  "function getMintInfo(uint256 tokenId) external view returns (tuple(uint256 tokenId, uint256 referenceDay, uint256 referenceMonth, string linkInfoComplete, string tokenURI))",
-  "function getTotalPagTpu(uint256 tokenId) external view returns (string[] memory azulValues, string[] memory verdeValues)",
-  "function getTickets(uint256 tokenId, uint256 deviceId) external view returns (uint256 ticketAzul, uint256 ticketVerde)",
-  "function getPagTpu(uint256 tokenId, uint256 deviceId) external view returns (string memory pagTpuAzul, string memory pagTpuVerde)"
+  "function getTokenInfo(uint256 tokenId) external view returns (tuple(uint256 tokenId, string info, string value, uint8 referenceDay, uint8 referenceMonth))",
+  "function getDadosByData(uint8 diaRef, uint8 mesRef) external view returns (tuple(uint256 tokenId, string info, string value, uint8 referenceDay, uint8 referenceMonth)[])",
+  "function mintNFT(string info, string value, string _tokenURI, uint8 referenceDay, uint8 referenceMonth) public"
 ];
 
 const handleContractError = (error) => {
@@ -42,65 +41,38 @@ export const getContractData = async (contractAddress) => {
   }
 };
 
-export const getMintInfo = async (contractAddress, tokenId) => {
+export const getTokenInfo = async (contractAddress, tokenId) => {
   try {
     const contract = await getContractData(contractAddress);
-    const result = await contract.getMintInfo(tokenId);
+    const result = await contract.getTokenInfo(tokenId);
     
     return {
       tokenId: result.tokenId.toString(),
-      referenceDay: result.referenceDay.toString(),
-      referenceMonth: result.referenceMonth.toString(),
-      linkInfoComplete: result.linkInfoComplete,
-      tokenURI: result.tokenURI
+      info: result.info,
+      value: result.value,
+      referenceDay: result.referenceDay,
+      referenceMonth: result.referenceMonth
     };
   } catch (error) {
-    console.error('getMintInfo error:', error);
+    console.error('getTokenInfo error:', error);
     handleContractError(error);
   }
 };
 
-export const getTickets = async (contractAddress, tokenId, deviceId) => {
+export const getDadosByData = async (contractAddress, day, month) => {
   try {
     const contract = await getContractData(contractAddress);
-    const result = await contract.getTickets(tokenId, deviceId);
+    const result = await contract.getDadosByData(day, month);
     
-    return {
-      ticketAzul: result.ticketAzul.toString(),
-      ticketVerde: result.ticketVerde.toString()
-    };
+    return result.map(token => ({
+      tokenId: token.tokenId.toString(),
+      info: token.info,
+      value: token.value,
+      referenceDay: token.referenceDay,
+      referenceMonth: token.referenceMonth
+    }));
   } catch (error) {
-    console.error('getTickets error:', error);
-    handleContractError(error);
-  }
-};
-
-export const getPagTpu = async (contractAddress, tokenId, deviceId) => {
-  try {
-    const contract = await getContractData(contractAddress);
-    const result = await contract.getPagTpu(tokenId, deviceId);
-    
-    return {
-      pagTpuAzul: result.pagTpuAzul,
-      pagTpuVerde: result.pagTpuVerde
-    };
-  } catch (error) {
-    console.error('getPagTpu error:', error);
-    handleContractError(error);
-  }
-};
-
-export const getTotalPagTpu = async (contractAddress, tokenId) => {
-  try {
-    const contract = await getContractData(contractAddress);
-    const result = await contract.getTotalPagTpu(tokenId);
-    
-    return {
-      azulValues: result.azulValues,
-      verdeValues: result.verdeValues
-    };
-  } catch (error) {
-    console.error('getTotalPagTpu error:', error);
+    console.error('getDadosByData error:', error);
     handleContractError(error);
   }
 }; 

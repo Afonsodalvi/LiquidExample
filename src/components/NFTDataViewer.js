@@ -1,17 +1,13 @@
 import React from 'react';
-import MintInfoReader from './NFTReaders/MintInfoReader';
-import PagTpuReader from './NFTReaders/PagTpuReader';
-import TicketsReader from './NFTReaders/TicketsReader';
-import TotalPagTpuReader from './NFTReaders/TotalPagTpuReader';
+import TokenInfoReader from './NFTReaders/TokenInfoReader';
+import DadosByDataReader from './NFTReaders/DadosByDataReader';
 
 const NFTDataViewer = ({ contractAddress }) => {
   return (
     <div className="nft-data-viewer">
       <h2>NFT Data Viewer</h2>
-      <MintInfoReader contractAddress={contractAddress} />
-      <TotalPagTpuReader contractAddress={contractAddress} />
-      <PagTpuReader contractAddress={contractAddress} />
-      <TicketsReader contractAddress={contractAddress} />
+      <TokenInfoReader contractAddress={contractAddress} />
+      <DadosByDataReader contractAddress={contractAddress} />
     </div>
   );
 };

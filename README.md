@@ -1,103 +1,142 @@
-# Leitor e Mint de NFT
+# NFT Minting and Reading Application
 
-Uma aplicação React para interagir com smart contracts NFT na rede de teste Polygon Amoy. Este projeto permite aos usuários ler dados de NFTs e criar novos NFTs através de uma interface simples.
+A React application for interacting with a simple NFT smart contract on the Polygon Amoy testnet. This project allows users to mint new NFTs and read NFT data through a clean interface.
 
 ## Smart Contract
-A aplicação interage com um smart contract implantado na rede de teste Polygon Amoy:
-- **Endereço do Contrato**: [0x14915Be6fb5900B5D26CD356C4bB256ed708d097](https://amoy.polygonscan.com/address/0x14915Be6fb5900B5D26CD356C4bB256ed708d097#readContract)
-- **Rede**: Polygon Amoy (Rede de Teste)
+
+The application interacts with a smart contract deployed on the Polygon Amoy testnet:
+
+- **Contract Address**: [0x87d563dD62092222D61b6F85a88A6f774F051596](https://amoy.polygonscan.com/address/0x87d563dD62092222D61b6F85a88A6f774F051596)
+- **Network**: Polygon Amoy (Testnet)
 - **Chain ID**: 80002
 
-## Funcionalidades
+## Features
 
-### 1. Leitura de Dados NFT
-- **Informações de Mint**: Visualize detalhes do token incluindo valor, dia de referência e mês de referência
-- **Dados PagTpu**: Acesse valores PagTpu para Zona Azul e Zona Verde
-- **Tickets**: Visualize informações de tickets para diferentes dispositivos
-- **PagTpu Total**: Obtenha dados agregados de PagTpu
+### 1. NFT Data Reading
 
-### 2. Criação de NFT (Mint)
-- Interface simples para mint
-- Acompanhamento do status da transação
-- Tratamento de erros e feedback
+- **Token Information**: View token details including info, value, reference day, and reference month
+- **Date-based Search**: Search for tokens by reference day and month
 
-## Configuração
+### 2. NFT Minting
 
-### Pré-requisitos
-- Node.js (v14 ou superior)
-- npm ou yarn
-- MetaMask ou carteira Web3 similar
-- Acesso à rede de teste Polygon Amoy
+- Simple interface for minting new NFTs
+- Transaction status tracking
+- Error handling and feedback
+- Explorer link for successful transactions
 
-### Instalação
-1. Clone o repositório:
+## Setup
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- npm or yarn
+- Access to Polygon Amoy testnet
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-git clone [url-do-repositório]
-cd [diretório-do-projeto]
+git clone [repository-url]
+cd [project-directory]
 ```
 
-2. Instale as dependências:
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Configure as variáveis de ambiente:
+3. Configure environment variables:
 
 ```bash
 cp .env.example .env
 ```
 
+Add the following to your .env file:
+
 ```bash
-REACT_APP_RPC_BLOCKCHAIN=https://polygon-amoy.g.alchemy.com/v2/SUA_CHAVE_ALCHEMY
-REACT_APP_CONTRACT_ID=0x14915Be6fb5900B5D26CD356C4bB256ed708d097
-REACT_APP_AUTH_TOKEN=seu_token_de_autenticação
+REACT_APP_RPC_BLOCKCHAIN=https://polygon-amoy.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
+REACT_APP_CONTRACT_ID=0x87d563dD62092222D61b6F85a88A6f774F051596
+REACT_APP_AUTH_TOKEN=your_authentication_token
 ```
 
-4. Inicie a aplicação:
+4. Start the application:
 
 ```bash
 npm start
 ```
 
+## Smart Contract Functions
 
-## Funções do Smart Contract
+### Read Functions
 
-### Funções de Leitura
-1. `getMintInfo(uint256 tokenId)`
-   - Retorna: (uint256, uint256, uint256)
-   - Obtém informações básicas sobre um token mintado
+1. `getTokenInfo(uint256 tokenId)`
 
-2. `getTotalPagTpu(uint256 tokenId)`
-   - Retorna: (bytes[] azulValues, bytes[] verdeValues)
-   - Recupera valores totais de PagTpu para ambas as zonas
+   - Returns: TokenInfo struct (tokenId, info, value, referenceDay, referenceMonth)
+   - Gets detailed information about a specific token
 
-3. `getTickets(uint256 tokenId, uint256 deviceId)`
-   - Retorna: (uint256 ticketAzul, uint256 ticketVerde)
-   - Obtém informações de tickets para dispositivo específico
+2. `getDadosByData(uint8 diaRef, uint8 mesRef)`
+   - Returns: Array of TokenInfo structs
+   - Retrieves all tokens for a specific reference date
 
-4. `getPagTpu(uint256 tokenId, uint256 deviceId)`
-   - Retorna: (bytes pagTpuAzul, bytes pagTpuVerde)
-   - Recupera dados PagTpu para um dispositivo específico
+### Write Functions
 
-### IDs dos Dispositivos
-O sistema suporta vários dispositivos identificados pelos seguintes IDs:
-- 1: Parquímetro
-- 2: Monitor
-- 3: PDV
-- 4: App
-- 5: WhatsApp
-- 6: Site
+1. `mintNFT(string info, string value, string _tokenURI, uint8 referenceDay, uint8 referenceMonth)`
+   - Mints a new NFT with the specified parameters
+   - Validates day (1-31) and month (1-12)
+   - Requires non-empty value
 
-## Informações da Rede
+## Network Information
 
-### Rede de Teste Polygon Amoy
-- **Nome da Rede**: Polygon Amoy
-- **URL RPC**: https://polygon-amoy.g.alchemy.com/v2/
+### Polygon Amoy Testnet
+
+- **Network Name**: Polygon Amoy
+- **RPC URL**: https://polygon-amoy.g.alchemy.com/v2/
 - **Chain ID**: 80002
-- **Símbolo da Moeda**: MATIC
-- **Explorador de Blocos**: [Amoy PolygonScan](https://amoy.polygonscan.com)
+- **Currency Symbol**: MATIC
+- **Block Explorer**: [Amoy PolygonScan](https://amoy.polygonscan.com)
 
-## Estrutura do Projeto
+## Project Structure
 
+```
+src/
+├── components/
+│   ├── CreateWallet.js
+│   ├── MintNFTSimple.js
+│   ├── NFTDataViewer.js
+│   └── NFTReaders/
+│       ├── TokenInfoReader.js
+│       └── DadosByDataReader.js
+├── utils/
+│   └── contractReads.js
+├── App.js
+└── index.js
+```
+## Example payload for minting
+```json
+curl --location 'https://protocol-sandbox.lumx.io/v2/transactions/custom' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer <your_auth_token>' \
+--data '{
+    "walletId": "2eebf08a-faf6-4bef-ad43-6461021114ef",
+    "contractAddress": "0x87d563dD62092222D61b6F85a88A6f774F051596",
+    "operations": [{
+        "functionSignature": "mintNFT(string,string,string,uint8,uint8)",
+        "argumentsValues": [
+            "Test Info",
+            "Test Value",
+            "https://example.com/metadata",
+            1,
+            1
+        ]
+    }]
+}'
+```
+## Contributing
+
+Feel free to submit issues and pull requests.
+
+## License
+
+This project is licensed under the MIT License.
