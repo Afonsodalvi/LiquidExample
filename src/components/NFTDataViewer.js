@@ -1,6 +1,7 @@
 import React from 'react';
 import TokenInfoReader from './NFTReaders/TokenInfoReader';
 import DadosByDataReader from './NFTReaders/DadosByDataReader';
+import DadosByIBGEReader from './NFTReaders/DadosByIBGEReader';
 
 const NFTDataViewer = ({ contractAddress }) => {
   return (
@@ -8,6 +9,7 @@ const NFTDataViewer = ({ contractAddress }) => {
       <h2>NFT Data Viewer</h2>
       <TokenInfoReader contractAddress={contractAddress} />
       <DadosByDataReader contractAddress={contractAddress} />
+      <DadosByIBGEReader contractAddress={contractAddress} />
     </div>
   );
 };

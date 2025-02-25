@@ -1,30 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-const POLL_INTERVAL = 2000; // 2 seconds
-const MAX_RETRIES = 6; // Maximum number of retries
-const TIMEOUT_DURATION = 12000; // 12 seconds (2s * 6 retries)
-
-const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
+const SetIBGE = ({ contractAddress, authToken }) => {
   const [loading, setLoading] = useState(false);
   const [transactionHash, setTransactionHash] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
-    info: '',
-    value: '',
-    tokenURI: 'https://example.com/metadata',
-    referenceDay: 1,
-    referenceMonth: 1,
-    referenceYear: new Date().getFullYear(), // Default to current year
-    version: 1
+    address: '',
+    ibge: ''
   });
 
-  useEffect(() => {
-    // Cleanup function to clear any remaining intervals/timeouts
-    return () => {
-      setLoading(false);
-      setErrorMessage('');
-    };
-  }, []);
+  const WALLET_ID = '0added59-15a1-48cf-8a06-96269ab69e5c'; // Fixed wallet ID for admin operations
+  const POLL_INTERVAL = 2000; // 2 seconds
+  const MAX_RETRIES = 6; // Maximum number of retries
+  const TIMEOUT_DURATION = 12000; // 12 seconds
 
   const pollTransaction = async (transactionId) => {
     return new Promise((resolve, reject) => {
@@ -82,7 +70,7 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
     });
   };
 
-  const handleMintSimple = async () => {
+  const handleSetIBGE = async () => {
     setLoading(true);
     setErrorMessage('');
     setTransactionHash(null);
@@ -95,24 +83,19 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          walletId,
+          walletId: WALLET_ID,
           contractAddress,
           operations: [{
-            functionSignature: 'mintNFT(string,string,string,uint8,uint8,uint16,uint256)',
+            functionSignature: 'setIBGE(address,uint256)',
             argumentsValues: [
-              formData.info,
-              formData.value,
-              formData.tokenURI,
-              formData.referenceDay,
-              formData.referenceMonth,
-              formData.referenceYear,
-              formData.version
+              formData.address,
+              formData.ibge
             ],
           }],
         }),
       });
 
-      if (!response.ok) throw new Error('Mint failed');
+      if (!response.ok) throw new Error('Set IBGE failed');
       
       const data = await response.json();
       const transactionId = data.id;
@@ -126,16 +109,16 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
       }
 
     } catch (error) {
-      console.error('Error minting NFT:', error);
-      setErrorMessage('Failed to mint NFT. Please try again.');
+      console.error('Error setting IBGE:', error);
+      setErrorMessage('Failed to set IBGE. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="mint-nft-container">
-      <h2>Mint NFT</h2>
+    <div className="set-ibge-container">
+      <h2>Set IBGE Code</h2>
       {errorMessage && (
         <div className="error-message">
           {errorMessage}
@@ -143,76 +126,31 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
       )}
       <div className="form-group">
         <label>
-          Info:
+          Wallet Address:
           <input
             type="text"
-            value={formData.info}
-            onChange={(e) => setFormData({...formData, info: e.target.value})}
-            placeholder="Enter NFT information"
+            value={formData.address}
+            onChange={(e) => setFormData({...formData, address: e.target.value})}
+            placeholder="Enter wallet address (0x...)"
           />
         </label>
         <label>
-          Value:
-          <input
-            type="text"
-            value={formData.value}
-            onChange={(e) => setFormData({...formData, value: e.target.value})}
-            placeholder="Enter value"
-          />
-        </label>
-        <label>
-          Token URI:
-          <input
-            type="text"
-            value={formData.tokenURI}
-            onChange={(e) => setFormData({...formData, tokenURI: e.target.value})}
-          />
-        </label>
-        <label>
-          Reference Day:
+          IBGE Code:
           <input
             type="number"
             min="1"
-            max="31"
-            value={formData.referenceDay}
-            onChange={(e) => setFormData({...formData, referenceDay: parseInt(e.target.value)})}
-          />
-        </label>
-        <label>
-          Reference Month:
-          <input
-            type="number"
-            min="1"
-            max="12"
-            value={formData.referenceMonth}
-            onChange={(e) => setFormData({...formData, referenceMonth: parseInt(e.target.value)})}
-          />
-        </label>
-        <label>
-          Reference Year:
-          <input
-            type="number"
-            min="1"
-            value={formData.referenceYear}
-            onChange={(e) => setFormData({...formData, referenceYear: parseInt(e.target.value)})}
-          />
-        </label>
-        <label>
-          Version:
-          <input
-            type="number"
-            min="1"
-            value={formData.version}
-            onChange={(e) => setFormData({...formData, version: parseInt(e.target.value)})}
+            value={formData.ibge}
+            onChange={(e) => setFormData({...formData, ibge: e.target.value})}
+            placeholder="Enter IBGE code"
           />
         </label>
 
         <div className="button-group">
           <button 
-            onClick={handleMintSimple} 
-            disabled={loading}
+            onClick={handleSetIBGE} 
+            disabled={loading || !formData.address || !formData.ibge}
           >
-            {loading ? 'Processing...' : 'Mint NFT'}
+            {loading ? 'Processing...' : 'Set IBGE'}
           </button>
         </div>
       </div>
@@ -232,4 +170,4 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
   );
 };
 
-export default MintNFTSimple;
+export default SetIBGE; 

@@ -395,3 +395,35 @@ h1 {
     grid-column: span 1;
   }
 }
+
+.set-ibge-container {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin: 20px 0;
+  background-color: white;
+}
+
+.set-ibge-container h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.set-ibge-container .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.set-ibge-container input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.set-ibge-container button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

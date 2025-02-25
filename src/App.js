@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import CreateWallet from './components/CreateWallet';
 import MintNFTSimple from './components/MintNFTSimple';
 import NFTDataViewer from './components/NFTDataViewer';
+import SetIBGE from './components/SetIBGE';
 import './App.css';
 
 const App = () => {
@@ -29,6 +30,10 @@ const App = () => {
           walletId={walletId} 
           contractAddress={contractAddress} 
           authToken={authToken} 
+        />
+        <SetIBGE 
+          contractAddress={contractAddress} 
+          authToken={authToken}
         />
         <NFTDataViewer contractAddress={contractAddress} />
       </main>

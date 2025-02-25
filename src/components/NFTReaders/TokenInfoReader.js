@@ -62,6 +62,14 @@ const TokenInfoReader = ({ contractAddress }) => {
             <strong>Reference Month:</strong>
             <span>{tokenInfo.referenceMonth}</span>
           </div>
+          <div className="info-item">
+            <strong>Reference Year:</strong>
+            <span>{tokenInfo.referenceYear}</span>
+          </div>
+          <div className="info-item">
+            <strong>Version:</strong>
+            <span>{tokenInfo.version}</span>
+          </div>
         </div>
       )}
     </div>

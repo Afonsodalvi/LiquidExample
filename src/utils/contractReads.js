@@ -18,9 +18,10 @@ provider.getNetwork().then(network => {
 
 // Updated ABI to match the new contract
 const contractABI = [
-  "function getTokenInfo(uint256 tokenId) external view returns (tuple(uint256 tokenId, string info, string value, uint8 referenceDay, uint8 referenceMonth))",
-  "function getDadosByData(uint8 diaRef, uint8 mesRef) external view returns (tuple(uint256 tokenId, string info, string value, uint8 referenceDay, uint8 referenceMonth)[])",
-  "function mintNFT(string info, string value, string _tokenURI, uint8 referenceDay, uint8 referenceMonth) public"
+  "function getTokenInfo(uint256 tokenId) external view returns (tuple(uint256 tokenId, string info, string value, uint8 referenceDay, uint8 referenceMonth, uint16 referenceYear, uint256 version))",
+  "function getDadosByData(uint8 diaRef, uint8 mesRef) external view returns (tuple(uint256 tokenId, string info, string value, uint8 referenceDay, uint8 referenceMonth, uint16 referenceYear, uint256 version)[])",
+  "function mintNFT(string info, string value, string _tokenURI, uint8 referenceDay, uint8 referenceMonth, uint16 referenceYear, uint256 version) public",
+  "function getDadosIBGE(uint256 ibge, uint16 yearReference) external view returns (tuple(uint256 tokenId, string info, string value, uint8 referenceDay, uint8 referenceMonth, uint16 referenceYear, uint256 version)[])"
 ];
 
 const handleContractError = (error) => {
@@ -51,7 +52,9 @@ export const getTokenInfo = async (contractAddress, tokenId) => {
       info: result.info,
       value: result.value,
       referenceDay: result.referenceDay,
-      referenceMonth: result.referenceMonth
+      referenceMonth: result.referenceMonth,
+      referenceYear: result.referenceYear,
+      version: result.version.toString()
     };
   } catch (error) {
     console.error('getTokenInfo error:', error);
@@ -69,10 +72,32 @@ export const getDadosByData = async (contractAddress, day, month) => {
       info: token.info,
       value: token.value,
       referenceDay: token.referenceDay,
-      referenceMonth: token.referenceMonth
+      referenceMonth: token.referenceMonth,
+      referenceYear: token.referenceYear,
+      version: token.version.toString()
     }));
   } catch (error) {
     console.error('getDadosByData error:', error);
+    handleContractError(error);
+  }
+};
+
+export const getDadosIBGE = async (contractAddress, ibge, yearReference) => {
+  try {
+    const contract = await getContractData(contractAddress);
+    const result = await contract.getDadosIBGE(ibge, yearReference);
+    
+    return result.map(token => ({
+      tokenId: token.tokenId.toString(),
+      info: token.info,
+      value: token.value,
+      referenceDay: token.referenceDay,
+      referenceMonth: token.referenceMonth,
+      referenceYear: token.referenceYear,
+      version: token.version.toString()
+    }));
+  } catch (error) {
+    console.error('getDadosIBGE error:', error);
     handleContractError(error);
   }
 }; 
