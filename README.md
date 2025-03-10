@@ -6,7 +6,7 @@ A React application for interacting with a simple NFT smart contract on the Poly
 
 The application interacts with a smart contract deployed on the Polygon Amoy testnet:
 
-- **Contract Address**: [0x87d563dD62092222D61b6F85a88A6f774F051596](https://amoy.polygonscan.com/address/0x87d563dD62092222D61b6F85a88A6f774F051596)
+- **Contract Address**: [0x42B65304Bf22ed5186fBf8812937e7d3D90EBB8F](https://amoy.polygonscan.com/address/0x42b65304bf22ed5186fbf8812937e7d3d90ebb8f#readContract)
 - **Network**: Polygon Amoy (Testnet)
 - **Chain ID**: 80002
 
