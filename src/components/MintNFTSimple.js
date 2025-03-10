@@ -15,7 +15,8 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
     referenceDay: 1,
     referenceMonth: 1,
     referenceYear: new Date().getFullYear(), // Default to current year
-    version: 1
+    version: 1,
+    ibge: ''
   });
 
   useEffect(() => {
@@ -98,7 +99,7 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
           walletId,
           contractAddress,
           operations: [{
-            functionSignature: 'mintNFT(string,string,string,uint8,uint8,uint16,uint256)',
+            functionSignature: 'mintNFT(string,string,string,uint8,uint8,uint16,uint256,uint256)',
             argumentsValues: [
               formData.info,
               formData.value,
@@ -106,7 +107,8 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
               formData.referenceDay,
               formData.referenceMonth,
               formData.referenceYear,
-              formData.version
+              formData.version,
+              formData.ibge
             ],
           }],
         }),
@@ -206,11 +208,21 @@ const MintNFTSimple = ({ walletId, contractAddress, authToken }) => {
             onChange={(e) => setFormData({...formData, version: parseInt(e.target.value)})}
           />
         </label>
+        <label>
+          IBGE Code:
+          <input
+            type="number"
+            min="1"
+            value={formData.ibge}
+            onChange={(e) => setFormData({...formData, ibge: parseInt(e.target.value)})}
+            placeholder="Enter IBGE code"
+          />
+        </label>
 
         <div className="button-group">
           <button 
             onClick={handleMintSimple} 
-            disabled={loading}
+            disabled={loading || !formData.info || !formData.value || !formData.ibge}
           >
             {loading ? 'Processing...' : 'Mint NFT'}
           </button>

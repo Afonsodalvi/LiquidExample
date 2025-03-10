@@ -6,7 +6,7 @@ A React application for interacting with a simple NFT smart contract on the Poly
 
 The application interacts with a smart contract deployed on the Polygon Amoy testnet:
 
-- **Contract Address**: [0x42B65304Bf22ed5186fBf8812937e7d3D90EBB8F](https://amoy.polygonscan.com/address/0x42b65304bf22ed5186fbf8812937e7d3d90ebb8f#readContract)
+- **Contract Address**: [0xCBBa8905AaF2eE4cB0226d2C6047852047049650](https://amoy.polygonscan.com/address/0xcbba8905aaf2ee4cb0226d2c6047852047049650#readContract)
 - **Network**: Polygon Amoy (Testnet)
 - **Chain ID**: 80002
 
@@ -57,7 +57,7 @@ Add the following to your .env file:
 
 ```bash
 REACT_APP_RPC_BLOCKCHAIN=https://polygon-amoy.g.alchemy.com/v2/YOUR_ALCHEMY_KEY
-REACT_APP_CONTRACT_ID=0x74D6C808995Cdc81299A4C0228e3A8ed8a9caf17
+REACT_APP_CONTRACT_ID=0xCBBa8905AaF2eE4cB0226d2C6047852047049650
 REACT_APP_AUTH_TOKEN=your_authentication_token
 ```
 
@@ -73,7 +73,7 @@ npm start
 
 1. `getTokenInfo(uint256 tokenId)`
 
-   - Returns: TokenInfo struct (tokenId, info, value, referenceDay, referenceMonth)
+   - Returns: TokenInfo struct (tokenId, info, value, referenceDay, referenceMonth, referenceYear, version)
    - Gets detailed information about a specific token
 
 2. `getDadosByData(uint8 diaRef, uint8 mesRef)`
@@ -82,15 +82,21 @@ npm start
    - Retrieves all tokens for a specific reference date
 
 3. `getIBGE(address addr)`
+
    - Returns: uint256 (IBGE code)
    - Gets the IBGE code associated with a specific wallet address
 
+4. `getAddressByIBGE(uint256 ibge)`
+   - Returns: address
+   - Gets the wallet address associated with a specific IBGE code
+
 ### Write Functions
 
-1. `mintNFT(string info, string value, string _tokenURI, uint8 referenceDay, uint8 referenceMonth)`
+1. `mintNFT(string info, string value, string _tokenURI, uint8 referenceDay, uint8 referenceMonth, uint16 referenceYear, uint256 version, uint256 ibge)`
    - Mints a new NFT with the specified parameters
    - Validates day (1-31) and month (1-12)
    - Requires non-empty value
+   - Includes IBGE code reference
 
 ## Network Information
 
@@ -131,9 +137,9 @@ curl --location 'https://protocol-sandbox.lumx.io/v2/transactions/custom' \
 --header 'Authorization: Bearer <your_auth_token>' \
 --data '{
     "walletId": "2eebf08a-faf6-4bef-ad43-6461021114ef",
-    "contractAddress": "0x74D6C808995Cdc81299A4C0228e3A8ed8a9caf17",
+    "contractAddress": "0xCBBa8905AaF2eE4cB0226d2C6047852047049650",
     "operations": [{
-        "functionSignature": "mintNFT(string,string,string,uint8,uint8,uint16,uint256)",
+        "functionSignature": "mintNFT(string,string,string,uint8,uint8,uint16,uint256,uint256)",
         "argumentsValues": [
             "Test Info",
             "Test Value",
@@ -141,24 +147,26 @@ curl --location 'https://protocol-sandbox.lumx.io/v2/transactions/custom' \
             1,
             1,
             2024,
-            1
+            1,
+            123456
         ]
     }]
 }'
 ```
 
-### Como que esta a ordem de referencia do dia, mes e ano e tambem a versao:
+### Order of parameters for mintNFT:
 
 ```javascript
 function mintNFT(
-        string memory info,
-        string memory value,
-        string memory _tokenURI,
-        uint8 referenceDay,
-        uint8 referenceMonth,
-        uint16 referenceYear,
-        uint256 version
-    ) public {
+    string memory info,        // Information about the NFT
+    string memory value,       // Value associated with the NFT
+    string memory _tokenURI,   // URI for NFT metadata
+    uint8 referenceDay,        // Day (1-31)
+    uint8 referenceMonth,      // Month (1-12)
+    uint16 referenceYear,      // Year (e.g., 2024)
+    uint256 version,          // Version number
+    uint256 ibge             // IBGE code
+) public {
 ```
 
 ### 2. Setting IBGE Code
@@ -171,7 +179,7 @@ curl --location 'https://protocol-sandbox.lumx.io/v2/transactions/custom' \
 --header 'Authorization: Bearer <your_auth_token>' \
 --data '{
     "walletId": "0added59-15a1-48cf-8a06-96269ab69e5c",
-    "contractAddress": "0x74D6C808995Cdc81299A4C0228e3A8ed8a9caf17",
+    "contractAddress": "0xCBBa8905AaF2eE4cB0226d2C6047852047049650",
     "operations": [{
         "functionSignature": "setIBGE(address,uint256)",
         "argumentsValues": [
@@ -217,6 +225,20 @@ const ibgeCode = await getIBGE(
   "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
 );
 console.log("IBGE Code:", ibgeCode);
+```
+
+### 5. Getting Address by IBGE Code
+
+```javascript
+// Using ethers.js
+const contract = new ethers.Contract(contractAddress, contractABI, provider);
+const address = await contract.getAddressByIBGE(123456);
+console.log("Wallet Address:", address);
+
+// Using the provided utility function
+import { getAddressByIBGE } from "./utils/contractReads";
+const address = await getAddressByIBGE(contractAddress, 123456);
+console.log("Wallet Address:", address);
 ```
 
 ## Contributing

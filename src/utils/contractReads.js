@@ -20,9 +20,10 @@ provider.getNetwork().then(network => {
 const contractABI = [
   "function getTokenInfo(uint256 tokenId) external view returns (tuple(uint256 tokenId, string info, string value, uint8 referenceDay, uint8 referenceMonth, uint16 referenceYear, uint256 version))",
   "function getDadosByData(uint8 diaRef, uint8 mesRef) external view returns (tuple(uint256 tokenId, string info, string value, uint8 referenceDay, uint8 referenceMonth, uint16 referenceYear, uint256 version)[])",
-  "function mintNFT(string info, string value, string _tokenURI, uint8 referenceDay, uint8 referenceMonth, uint16 referenceYear, uint256 version) public",
+  "function mintNFT(string info, string value, string _tokenURI, uint8 referenceDay, uint8 referenceMonth, uint16 referenceYear, uint256 version, uint256 ibge) public",
   "function getDadosIBGE(uint256 ibge, uint16 yearReference) external view returns (tuple(uint256 tokenId, string info, string value, uint8 referenceDay, uint8 referenceMonth, uint16 referenceYear, uint256 version)[])",
-  "function getIBGE(address addr) external view returns (uint256)"
+  "function getIBGE(address addr) external view returns (uint256)",
+  "function getAddressByIBGE(uint256 ibge) external view returns (address)"
 ];
 
 const handleContractError = (error) => {
@@ -110,6 +111,17 @@ export const getIBGE = async (contractAddress, walletAddress) => {
     return result.toString();
   } catch (error) {
     console.error('getIBGE error:', error);
+    handleContractError(error);
+  }
+};
+
+export const getAddressByIBGE = async (contractAddress, ibgeCode) => {
+  try {
+    const contract = await getContractData(contractAddress);
+    const result = await contract.getAddressByIBGE(ibgeCode);
+    return result;
+  } catch (error) {
+    console.error('getAddressByIBGE error:', error);
     handleContractError(error);
   }
 }; 
