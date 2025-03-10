@@ -2,6 +2,7 @@ import React from 'react';
 import TokenInfoReader from './NFTReaders/TokenInfoReader';
 import DadosByDataReader from './NFTReaders/DadosByDataReader';
 import DadosByIBGEReader from './NFTReaders/DadosByIBGEReader';
+import GetIBGE from './NFTReaders/GetIBGE';
 
 const NFTDataViewer = ({ contractAddress }) => {
   return (
@@ -10,6 +11,7 @@ const NFTDataViewer = ({ contractAddress }) => {
       <TokenInfoReader contractAddress={contractAddress} />
       <DadosByDataReader contractAddress={contractAddress} />
       <DadosByIBGEReader contractAddress={contractAddress} />
+      <GetIBGE contractAddress={contractAddress} />
     </div>
   );
 };

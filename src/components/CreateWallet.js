@@ -3,14 +3,18 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const CreateWallet = ({ setWalletId, setWalletAddress }) => {
-  const [inputWalletId, setInputWalletId] = useState(''); // Campo para ID da wallet existente
+  const [inputWalletId, setInputWalletId] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const authToken = process.env.REACT_APP_AUTH_TOKEN;
 
-  // Função para conectar uma wallet existente
+  // Function to connect existing wallet
   const connectExistingWallet = async () => {
+    setLoading(true);
+    setError('');
     try {
       const response = await axios.get(
-        `https://protocol-sandbox.lumx.io/v2/wallets/${inputWalletId}`,
+        `https://protocol-sandbox.lumx.io/v2/wallets/${inputWalletId}?includeTokens=false`,
         {
           headers: { Authorization: authToken },
         }
@@ -18,12 +22,17 @@ const CreateWallet = ({ setWalletId, setWalletAddress }) => {
       setWalletId(response.data.id);
       setWalletAddress(response.data.address);
     } catch (error) {
-      console.error('Erro ao conectar a wallet existente:', error);
+      console.error('Error connecting to existing wallet:', error);
+      setError('Failed to connect to wallet. Please verify the Wallet ID.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Função para criar uma nova wallet
+  // Function to create new wallet
   const createNewWallet = async () => {
+    setLoading(true);
+    setError('');
     try {
       const response = await axios.post(
         'https://protocol-sandbox.lumx.io/v2/wallets',
@@ -35,7 +44,10 @@ const CreateWallet = ({ setWalletId, setWalletAddress }) => {
       setWalletId(response.data.id);
       setWalletAddress(response.data.address);
     } catch (error) {
-      console.error('Erro ao criar a carteira:', error);
+      console.error('Error creating wallet:', error);
+      setError('Failed to create new wallet. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,17 +60,25 @@ const CreateWallet = ({ setWalletId, setWalletAddress }) => {
   };
 
   return (
-    <div>
-      <label>
-        Wallet ID Existente:
-        <input
-          type="text"
-          value={inputWalletId}
-          onChange={(e) => setInputWalletId(e.target.value)}
-          placeholder="Insira o Wallet ID (opcional)"
-        />
-      </label>
-      <button onClick={handleConnect}>Conectar Wallet</button>
+    <div className="wallet-connection">
+      <div className="input-group">
+        <label>
+          Existing Wallet ID:
+          <input
+            type="text"
+            value={inputWalletId}
+            onChange={(e) => setInputWalletId(e.target.value)}
+            placeholder="Enter Wallet ID (optional)"
+          />
+        </label>
+      </div>
+      {error && <div className="error-message">{error}</div>}
+      <button 
+        onClick={handleConnect}
+        disabled={loading}
+      >
+        {loading ? 'Processing...' : inputWalletId ? 'Connect Wallet' : 'Create New Wallet'}
+      </button>
     </div>
   );
 };

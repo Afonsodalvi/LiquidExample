@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const SetIBGE = ({ contractAddress, authToken }) => {
   const [loading, setLoading] = useState(false);
   const [transactionHash, setTransactionHash] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
+    walletId: '',
     address: '',
     ibge: ''
   });
@@ -116,6 +118,24 @@ const SetIBGE = ({ contractAddress, authToken }) => {
     }
   };
 
+  const lookupWalletAddress = async (walletId) => {
+    try {
+      const response = await axios.get(
+        `https://protocol-sandbox.lumx.io/v2/wallets/${walletId}?includeTokens=false`,
+        {
+          headers: { Authorization: authToken },
+        }
+      );
+      setFormData(prev => ({
+        ...prev,
+        address: response.data.address
+      }));
+    } catch (error) {
+      console.error('Error looking up wallet address:', error);
+      setErrorMessage('Failed to find wallet address. Please verify the Wallet ID.');
+    }
+  };
+
   return (
     <div className="set-ibge-container">
       <h2>Set IBGE Code</h2>
@@ -126,12 +146,27 @@ const SetIBGE = ({ contractAddress, authToken }) => {
       )}
       <div className="form-group">
         <label>
+          Wallet ID:
+          <input
+            type="text"
+            value={formData.walletId}
+            onChange={(e) => setFormData({...formData, walletId: e.target.value})}
+            placeholder="Enter wallet ID"
+          />
+          <button 
+            onClick={() => lookupWalletAddress(formData.walletId)}
+            disabled={!formData.walletId}
+          >
+            Lookup Address
+          </button>
+        </label>
+        <label>
           Wallet Address:
           <input
             type="text"
             value={formData.address}
-            onChange={(e) => setFormData({...formData, address: e.target.value})}
-            placeholder="Enter wallet address (0x...)"
+            readOnly
+            placeholder="Address will appear here after lookup"
           />
         </label>
         <label>
